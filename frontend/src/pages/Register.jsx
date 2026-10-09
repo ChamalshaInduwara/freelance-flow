@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { User, Mail, Lock, Eye, EyeOff, ArrowRight, CheckCircle2 } from "lucide-react";
 
 import api from "../services/api";
 import { useAuth } from "../context/AuthContext";
@@ -16,6 +17,7 @@ const Register = () => {
     confirmPassword: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (event) => {
@@ -28,22 +30,15 @@ const Register = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const {
-      name,
-      email,
-      password,
-      confirmPassword,
-    } = formData;
+    const { name, email, password, confirmPassword } = formData;
 
     if (!name || !email || !password || !confirmPassword) {
-      toast.error("Please complete all fields");
+      toast.error("Please fill in all required fields");
       return;
     }
 
     if (password.length < 6) {
-      toast.error(
-        "Password must be at least 6 characters"
-      );
+      toast.error("Password must be at least 6 characters long");
       return;
     }
 
@@ -55,87 +50,110 @@ const Register = () => {
     try {
       setSubmitting(true);
 
-      const response = await api.post(
-        "/auth/register",
-        {
-          name,
-          email,
-          password,
-        }
-      );
+      const response = await api.post("/auth/register", {
+        name,
+        email,
+        password,
+      });
 
-      login(
-        response.data.user,
-        response.data.token
-      );
-
-      toast.success("Account created successfully");
-
+      login(response.data.user, response.data.token);
+      toast.success("Account created successfully! Welcome aboard 🚀");
       navigate("/dashboard");
     } catch (error) {
       toast.error(
-        error.response?.data?.message ||
-          "Registration failed"
+        error.response?.data?.message || "Registration failed"
       );
     } finally {
       setSubmitting(false);
     }
   };
 
+  const passwordsMatch =
+    formData.password &&
+    formData.confirmPassword &&
+    formData.password === formData.confirmPassword;
+
   return (
     <div className="auth-form-container">
       <div className="auth-form-header">
-        <h2>Create Account</h2>
-        <p>Create your account to start managing your freelance work.</p>
+        <h2>Create Account </h2>
+        <p>Start organizing your freelance projects and income today.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="auth-form">
         <div className="form-group">
-          <label>Full Name</label>
-
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Your full name"
-          />
+          <label>Full Name *</label>
+          <div className="input-with-icon">
+            <User size={18} className="input-icon" />
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="e.g. Alex Morgan"
+              required
+            />
+          </div>
         </div>
 
         <div className="form-group">
-          <label>Email</label>
-
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="you@example.com"
-          />
+          <label>Email Address *</label>
+          <div className="input-with-icon">
+            <Mail size={18} className="input-icon" />
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="you@example.com"
+              required
+            />
+          </div>
         </div>
 
         <div className="form-group">
-          <label>Password</label>
-
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Create a password"
-          />
+          <label>Password *</label>
+          <div className="input-with-icon">
+            <Lock size={18} className="input-icon" />
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="At least 6 characters"
+              required
+            />
+            <button
+              type="button"
+              className="password-toggle-btn"
+              onClick={() => setShowPassword(!showPassword)}
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
 
         <div className="form-group">
-          <label>Confirm Password</label>
-
-          <input
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            placeholder="Confirm your password"
-          />
+          <div className="label-row">
+            <label>Confirm Password *</label>
+            {passwordsMatch && (
+              <span className="match-badge">
+                <CheckCircle2 size={13} /> Passwords match
+              </span>
+            )}
+          </div>
+          <div className="input-with-icon">
+            <Lock size={18} className="input-icon" />
+            <input
+              type={showPassword ? "text" : "password"}
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="Re-enter your password"
+              required
+            />
+          </div>
         </div>
 
         <button
@@ -143,18 +161,19 @@ const Register = () => {
           className="primary-button auth-submit"
           disabled={submitting}
         >
-          {submitting
-            ? "Creating..."
-            : "Create Account"}
+          <span>{submitting ? "Creating Account..." : "Create My Account"}</span>
+          <ArrowRight size={18} />
         </button>
       </form>
 
-      <p className="auth-footer">
-        Already have an account?{" "}
-        <Link to="/login">
-          Sign In
-        </Link>
-      </p>
+      <div className="auth-footer">
+        <p>
+          Already have an account?{" "}
+          <Link to="/login" className="auth-link">
+            Sign In
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };

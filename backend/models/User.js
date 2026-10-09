@@ -21,6 +21,41 @@ const userSchema = new mongoose.Schema(
       required: [true, "Password is required"],
       minlength: 6,
     },
+
+    title: {
+      type: String,
+      default: "Freelance Professional",
+      trim: true,
+    },
+
+    phone: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    location: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    website: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    bio: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    hourlyRate: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

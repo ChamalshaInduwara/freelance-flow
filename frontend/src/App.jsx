@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Clients from "./pages/Clients";
 import Projects from "./pages/Projects";
 import Payments from "./pages/Payments";
+import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import AuthLayout from "./layouts/AuthLayout";
@@ -21,9 +22,9 @@ const App = () => {
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
       <Route element={<AuthLayout />}>
-  <Route path="/login" element={<Login />} />
-  <Route path="/register" element={<Register />} />
-</Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Route>
 
       <Route
         element={
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/clients" element={<Clients />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/payments" element={<Payments />} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
     </Routes>
   );
