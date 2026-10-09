@@ -111,47 +111,26 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Responsive Mobile Hamburger Toggle Button */}
+      {/* Responsive Mobile Hamburger Toggle Button */}
         <button
           className="hamburger-btn"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileMenuOpen}
         >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
 
-      {/* Mobile Navigation Drawer / Dropdown */}
+      {/* Responsive Mobile Navigation Dropdown (Comes Down smoothly) */}
       {mobileMenuOpen && (
-        <div className="mobile-menu-overlay" onClick={() => setMobileMenuOpen(false)}>
-          <div
-            className="mobile-menu-content"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="mobile-menu-header">
-              <Logo size="small" />
-              <button
-                className="mobile-close-btn"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <X size={20} />
-              </button>
+        <div className="mobile-dropdown-overlay" onClick={() => setMobileMenuOpen(false)}>
+          <div className="mobile-dropdown-menu" onClick={(e) => e.stopPropagation()}>
+            <div className="mobile-dropdown-header">
+              <span className="mobile-dropdown-title">Navigation</span>
             </div>
 
-            <NavLink to="/profile" onClick={() => setMobileMenuOpen(false)}>
-              <div className="mobile-user-card">
-                <div className="user-avatar-circle large">
-                  {user?.name ? user.name.charAt(0).toUpperCase() : <UserIcon size={18} />}
-                </div>
-                <div className="mobile-user-info">
-                  <p className="mobile-user-name">{user?.name || "User"}</p>
-                  <p className="mobile-user-email">{user?.email || "freelancer@flow.com"}</p>
-                </div>
-              </div>
-            </NavLink>
-
-            <nav className="mobile-nav-list">
+            <nav className="mobile-dropdown-nav">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -159,20 +138,33 @@ const Navbar = () => {
                     key={item.to}
                     to={item.to}
                     className={({ isActive }) =>
-                      `mobile-nav-item ${isActive ? "active" : ""}`
+                      `mobile-dropdown-item ${isActive ? "active" : ""}`
                     }
+                    onClick={() => setMobileMenuOpen(false)}
                   >
-                    <Icon size={20} />
+                    <Icon size={19} className="mobile-dropdown-icon" />
                     <span>{item.label}</span>
                   </NavLink>
                 );
               })}
             </nav>
 
-            <div className="mobile-menu-footer">
-              <button onClick={handleLogout} className="mobile-logout-btn">
-                <LogOut size={18} />
-                <span>Sign Out</span>
+            <div className="mobile-dropdown-divider" />
+
+            <div className="mobile-dropdown-user-row">
+              <NavLink to="/profile" className="mobile-dropdown-profile-link" onClick={() => setMobileMenuOpen(false)}>
+                <div className="user-avatar-circle">
+                  {user?.name ? user.name.charAt(0).toUpperCase() : <UserIcon size={14} />}
+                </div>
+                <div className="mobile-dropdown-user-text">
+                  <span className="mobile-dropdown-user-name">{user?.name || "User"}</span>
+                  <span className="mobile-dropdown-user-email">{user?.email || "freelancer@flow.com"}</span>
+                </div>
+              </NavLink>
+
+              <button onClick={handleLogout} className="mobile-dropdown-logout-btn" title="Logout">
+                <LogOut size={16} />
+                <span>Logout</span>
               </button>
             </div>
           </div>
