@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
   Plus,
@@ -20,6 +20,10 @@ const emptyForm = {
 const Payments = () => {
   const [payments, setPayments] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [summary, setSummary] = useState({
+    totalIncome: 0,
+    pendingPayments: 0,
+  });
 
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -43,6 +47,19 @@ const Payments = () => {
       setProjects(response.data);
     } catch (error) {
       toast.error("Unable to load projects");
+    }
+  };
+
+  const fetchSummary = async () => {
+    try {
+      const response = await api.get("/dashboard/summary");
+
+      setSummary({
+        totalIncome: response.data.totalIncome,
+        pendingPayments: response.data.pendingPayments,
+      });
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -73,23 +90,12 @@ const Payments = () => {
 
   useEffect(() => {
     fetchProjects();
+    fetchSummary();
   }, []);
 
   useEffect(() => {
     fetchPayments();
   }, [statusFilter]);
-
-  const totalPaid = useMemo(() => {
-    return payments
-      .filter((payment) => payment.status === "Paid")
-      .reduce((sum, payment) => sum + payment.amount, 0);
-  }, [payments]);
-
-  const totalPending = useMemo(() => {
-    return payments
-      .filter((payment) => payment.status === "Pending")
-      .reduce((sum, payment) => sum + payment.amount, 0);
-  }, [payments]);
 
   const handleChange = (event) => {
     setFormData({
@@ -168,6 +174,7 @@ const Payments = () => {
 
       closeForm();
       fetchPayments();
+      fetchSummary();
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
@@ -193,12 +200,69 @@ const Payments = () => {
       toast.success("Payment deleted successfully");
 
       fetchPayments();
+      fetchSummary();
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
           "Unable to delete payment"
       );
     }
+  };
+
+  const exportCSV = () => {
+    if (payments.length === 0) {
+      toast.error("No payments available to export");
+      return;
+    }
+
+    const headers = [
+      "Project",
+      "Client",
+      "Amount",
+      "Status",
+      "Payment Date",
+    ];
+
+    const rows = payments.map((payment) => [
+      payment.project?.name || "",
+      payment.project?.client?.name || "",
+      payment.amount,
+      payment.status,
+      payment.paymentDate
+        ? new Date(payment.paymentDate).toLocaleDateString()
+        : "",
+    ]);
+
+    const csv = [headers, ...rows]
+      .map((row) =>
+        row
+          .map((value) =>
+            `"${String(value).replace(/"/g, '""')}"`
+          )
+          .join(",")
+      )
+      .join("\n");
+
+    const blob = new Blob([csv], {
+      type: "text/csv;charset=utf-8;",
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.setAttribute(
+      "download",
+      "freelanceflow-payments.csv"
+    );
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+
+    toast.success("CSV exported successfully");
   };
 
   return (
@@ -211,27 +275,36 @@ const Payments = () => {
           </p>
         </div>
 
-        <button
-          className="primary-button"
-          onClick={openCreateForm}
-        >
-          <Plus size={18} />
-          Add Payment
-        </button>
+        <div className="action-buttons">
+          <button
+            className="secondary-button"
+            onClick={exportCSV}
+          >
+            Export CSV
+          </button>
+
+          <button
+            className="primary-button"
+            onClick={openCreateForm}
+          >
+            <Plus size={18} />
+            Add Payment
+          </button>
+        </div>
       </div>
 
       <div className="stats-grid payment-stats">
         <div className="stat-card">
           <div>
             <p>Paid Income</p>
-            <h3>{currency(totalPaid)}</h3>
+            <h3>{currency(summary.totalIncome)}</h3>
           </div>
         </div>
 
         <div className="stat-card">
           <div>
             <p>Pending Payments</p>
-            <h3>{currency(totalPending)}</h3>
+            <h3>{currency(summary.pendingPayments)}</h3>
           </div>
         </div>
       </div>

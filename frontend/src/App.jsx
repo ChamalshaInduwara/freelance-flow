@@ -13,14 +13,17 @@ import Projects from "./pages/Projects";
 import Payments from "./pages/Payments";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import AuthLayout from "./layouts/AuthLayout";
 
 const App = () => {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      <Route element={<AuthLayout />}>
+  <Route path="/login" element={<Login />} />
+  <Route path="/register" element={<Register />} />
+</Route>
 
       <Route
         element={

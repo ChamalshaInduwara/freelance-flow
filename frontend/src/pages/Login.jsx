@@ -58,13 +58,14 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h1>FreelanceFlow</h1>
+    <div className="auth-form-container">
+      <div className="auth-form-header">
+        <h2>Welcome Back</h2>
+        <p>Sign in to continue to your dashboard.</p>
+      </div>
 
-      <h2>Welcome Back</h2>
-
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form onSubmit={handleSubmit} className="auth-form">
+        <div className="form-group">
           <label>Email</label>
 
           <input
@@ -72,10 +73,11 @@ const Login = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
+            placeholder="you@example.com"
           />
         </div>
 
-        <div>
+        <div className="form-group">
           <label>Password</label>
 
           <input
@@ -83,18 +85,20 @@ const Login = () => {
             name="password"
             value={formData.password}
             onChange={handleChange}
+            placeholder="Enter your password"
           />
         </div>
 
         <button
           type="submit"
+          className="primary-button auth-submit"
           disabled={submitting}
         >
           {submitting ? "Signing in..." : "Sign In"}
         </button>
       </form>
 
-      <p>
+      <p className="auth-footer">
         Don't have an account?{" "}
         <Link to="/register">
           Create Account

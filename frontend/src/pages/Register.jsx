@@ -83,13 +83,14 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h1>FreelanceFlow</h1>
+    <div className="auth-form-container">
+      <div className="auth-form-header">
+        <h2>Create Account</h2>
+        <p>Create your account to start managing your freelance work.</p>
+      </div>
 
-      <h2>Create Account</h2>
-
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form onSubmit={handleSubmit} className="auth-form">
+        <div className="form-group">
           <label>Full Name</label>
 
           <input
@@ -97,10 +98,11 @@ const Register = () => {
             name="name"
             value={formData.name}
             onChange={handleChange}
+            placeholder="Your full name"
           />
         </div>
 
-        <div>
+        <div className="form-group">
           <label>Email</label>
 
           <input
@@ -108,10 +110,11 @@ const Register = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
+            placeholder="you@example.com"
           />
         </div>
 
-        <div>
+        <div className="form-group">
           <label>Password</label>
 
           <input
@@ -119,10 +122,11 @@ const Register = () => {
             name="password"
             value={formData.password}
             onChange={handleChange}
+            placeholder="Create a password"
           />
         </div>
 
-        <div>
+        <div className="form-group">
           <label>Confirm Password</label>
 
           <input
@@ -130,11 +134,13 @@ const Register = () => {
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
+            placeholder="Confirm your password"
           />
         </div>
 
         <button
           type="submit"
+          className="primary-button auth-submit"
           disabled={submitting}
         >
           {submitting
@@ -143,7 +149,7 @@ const Register = () => {
         </button>
       </form>
 
-      <p>
+      <p className="auth-footer">
         Already have an account?{" "}
         <Link to="/login">
           Sign In
